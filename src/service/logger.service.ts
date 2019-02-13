@@ -1,5 +1,6 @@
 import * as log4js from 'log4js';
 import { Logger } from 'log4js';
+import { environment } from '../environment/environment';
 
 log4js.configure({
     appenders: {
@@ -12,7 +13,7 @@ log4js.configure({
         }
     },
     categories: {
-        default: {appenders: ['console'], level: (process.env.NODE_ENV === 'production') ? 'warn' : 'debug'}
+        default: {appenders: ['console'], level: environment.isProduction ? 'warn' : 'debug'}
     }
 });
 
