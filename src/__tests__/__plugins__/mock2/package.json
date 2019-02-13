@@ -1,0 +1,8 @@
+{
+  "name": "mock2",
+  "version": "1.0.0",
+  "description": "Mock2",
+  "filter_prefixes": [
+    "mock2"
+  ]
+}

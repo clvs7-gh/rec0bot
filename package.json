@@ -1,0 +1,49 @@
+{
+  "name": "rec0-bot",
+  "version": "1.0.0",
+  "description": "A bot for revolution of comm :)",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run exec-ts",
+    "start:js": "npm run build && npm run exec",
+    "build": "tsc",
+    "exec": "node ./output/index.js",
+    "exec-ts": "ts-node src/index.ts",
+    "test": "source src/__tests__/env.sh && jest"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@slack/client": "^4.8.0",
+    "@types/lodash": "^4.14.120",
+    "cron": "^1.6.0",
+    "lodash": "^4.17.11",
+    "log4js": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/cron": "^1.6.0",
+    "@types/jest": "^24.0.3",
+    "jest": "^24.1.0",
+    "ts-jest": "^23.10.5",
+    "ts-lint": "^4.5.1",
+    "ts-node": "^8.0.2",
+    "typescript": "^3.3.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts)$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfigFile": "tsconfig.json"
+      }
+    },
+    "testMatch": [
+      "**/__tests__/**/*.test.(ts|js)"
+    ]
+  }
+}
