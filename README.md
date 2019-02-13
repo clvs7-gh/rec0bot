@@ -21,12 +21,12 @@ You can change configuration by setting environment variables below.
 - `REC0_ENV_PLUGIN_DIR_PATH` : Path for plugins directory.   
 - `REC0_ENV_PLUGIN_DISABLED_NAMES` : Plugin names that are excluded from running. You can specify multiple names with comma-separated.
 
-# Plugins
+## Plugins
 
 Rec0-bot has simple plugin system, so you can extend functionality by plugins.
 
 For examples, see rec0bot-plugins-* repositories.
 
-# License
+## License
 
 Apache License 2.0.
