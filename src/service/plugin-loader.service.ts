@@ -36,7 +36,7 @@ export class PluginLoaderService {
                             return [await import(path.join(environment.plugin.rootDir, dirName, 'index.js'))
                                 .catch((e) => {
                                     logger.warn(`Failed to 1st attempt on loading ${metadata.name} : `, e);
-                                    return process.env.NODE_ENV === 'production' ?
+                                    return environment.isProduction ?
                                         Promise.reject(e) : import(path.join(environment.plugin.rootDir, dirName, 'index.ts'));
                                 }), metadata];
                         } catch (e) {
