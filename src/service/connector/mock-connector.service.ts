@@ -10,6 +10,7 @@ export class MockConnectorService extends EventEmitter implements Connector {
         'sindoi しんどいテスト',
         'clean info',
     ];
+    private timeout: NodeJS.Timeout | undefined;
 
     emitMessage(message: string) {
         this.emit('message', {
@@ -23,7 +24,7 @@ export class MockConnectorService extends EventEmitter implements Connector {
         return 'MockConnector';
     }
 
-    init(): void {
+    async init() {
         if (this.isInit) {
             return;
         }
@@ -35,9 +36,15 @@ export class MockConnectorService extends EventEmitter implements Connector {
                 user: 'UDUMMYUSR000',
             };
             this.emit('message', dummyData);
-            setTimeout(() => loopFn(), 5000);
+            this.timeout = setTimeout(() => loopFn(), 5000);
         };
         loopFn();
+    }
+
+    async finish() {
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+        }
     }
 
     waitForOnline(): Promise<void> {

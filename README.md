@@ -27,7 +27,7 @@ You can change configuration by setting environment variables below.
 
 Rec0-bot has simple plugin system, so you can extend functionality by plugins.
 
-For examples, see rec0bot-plugins-* repositories.
+For examples, see rec0bot-plugin-* repositories.
 
 ## License
 

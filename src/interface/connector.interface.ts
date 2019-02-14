@@ -2,7 +2,8 @@ import { EventEmitter } from 'events';
 
 export interface Connector extends EventEmitter {
     getConnectorName(): string;
-    init(): void;
+    init(): Promise<void>;
+    finish(): Promise<void>;
     waitForOnline(): Promise<void>;
     getChannelId(channelName: string): Promise<string>;
     sendText(channelId: string, text: string, attachmentProperty?: {[key: string]: any}[]): Promise<any>;

@@ -23,7 +23,7 @@ export class SlackConnectorService extends EventEmitter implements Connector {
         return 'SlackConnector';
     }
 
-    init() {
+    async init() {
         this._ready = new Promise(async (resolve, reject) => {
             const result = await this.client.start();
             if (result.ok) {
@@ -33,6 +33,13 @@ export class SlackConnectorService extends EventEmitter implements Connector {
                 reject(result);
             }
         });
+        await this._ready;
+    }
+
+    async finish() {
+        if (this._ready) {
+            await this.client.disconnect();
+        }
     }
 
     async waitForOnline(): Promise<void> {

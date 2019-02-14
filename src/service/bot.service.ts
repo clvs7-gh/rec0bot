@@ -33,12 +33,27 @@ export class BotService {
         this.plugins[targetId].instance.onPluginEvent(eventName, _.cloneDeep(value), fromId);
     }
 
+    private wrapWithTimeout(promise: Promise<any>, timeoutMs = 5000, rejectOnTimedOut = false): Promise<any> {
+        let timeout: NodeJS.Timeout | undefined;
+        const timedOutPromise = new Promise((resolve, reject) => {
+            timeout = setTimeout(() => {
+                this.logger.warn('Timed out!');
+                rejectOnTimedOut ? reject() : resolve();
+                timeout = void 0;
+            }, timeoutMs);
+        });
+        return Promise.race([
+            promise.finally(() => timeout && clearTimeout(timeout)),
+            timedOutPromise
+        ]);
+    }
+
     async run(): Promise<void> {
         this.logger.info('Loading plugins...');
         // Loading plugins
         const pluginPromises = [];
         for ( const [instance, metadata] of (await PluginLoaderService.load()) ) {
-            pluginPromises.push(new Promise(async (resolve) => {
+            pluginPromises.push(await this.wrapWithTimeout(new Promise(async (resolve) => {
                 try {
                     // Initialize plugin
                     await instance.init(new BotProxyService(this), {logger: LoggerService.getLogger(metadata.name)});
@@ -55,20 +70,20 @@ export class BotService {
                 }
                 // Always resolve even if has any errors (for Promise.all())
                 resolve();
-            }));
+            })));
         }
         await Promise.all(pluginPromises);
         this.logger.info('Done.');
 
         // Initialize connector
-        this.connectorService.init();
+        await this.connectorService.init();
         this.logger.info('Waiting for online...');
         await this.connectorService.waitForOnline();
         this.logger.info('Connected.');
         this.logger.info(`Now ${this.botName} is watching you; it's ready!`);
-        this.connectorService.on('message', (v) => this.onMessage(v.text, v.channel, v.user, v));
         process.on('SIGINT', () => this.finish());
         process.on('exit', () => this.finish());
+        this.connectorService.on('message', (v) => this.onMessage(v.text, v.channel, v.user, v));
     }
 
     async finish() {
@@ -77,11 +92,11 @@ export class BotService {
         }
         this.isFinished = true;
         this.logger.info('Finishing...');
-        Object.values(this.plugins).forEach(entry => {
+        for ( const entry of Object.values(this.plugins) ) {
             entry.scheduledJobs.forEach((job) => job.stop());
-            entry.instance.onStop();
-        });
-        process.exit(0);
+            await entry.instance.onStop();
+        }
+        await this.connectorService.finish();
     }
 
     getActivePlugins(): RegisteredPluginInfo[] {
