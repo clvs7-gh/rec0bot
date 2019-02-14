@@ -1,5 +1,7 @@
 # Rec0-bot --- A bot for revolution of comm.
 
+[![Build Status](https://travis-ci.org/clvs7-gh/rec0bot.svg?branch=master)](https://travis-ci.org/clvs7-gh/rec0bot)
+
 ## What's this?
 
 A bot for Slack workspace. Works on Node.js.
