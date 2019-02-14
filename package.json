@@ -9,7 +9,7 @@
     "build": "tsc",
     "exec": "node ./output/index.js",
     "exec-ts": "ts-node src/index.ts",
-    "test": "source src/__tests__/env.sh && jest"
+    "test": "bash -c \"source src/__tests__/env.sh && jest\""
   },
   "author": "",
   "license": "Apache-2.0",
