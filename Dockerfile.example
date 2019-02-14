@@ -1,0 +1,20 @@
+FROM node:10-alpine
+MAINTAINER clvs7 <me@clvs7.com>
+
+RUN apk add --no-cache bash dumb-init git && \
+    cd /opt/ && \
+    git clone https://github.com/clvs7-gh/rec0bot && \
+    git clone https://github.com/clvs7-gh/rec0bot-plugin-sindoi rec0bot/plugins/sindoi && \
+    cd rec0bot/plugins/sindoi && \
+    # Build sindoi plugin
+    npm i && npm run build && \
+    rm -rf node_modules && npm i --production && \
+    cd ../../ && \
+    # Build core
+    npm i && npm run build && \
+    rm -rf node_modules && npm i --production
+
+WORKDIR /opt/rec0bot
+
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["node", "output/index.js"]
