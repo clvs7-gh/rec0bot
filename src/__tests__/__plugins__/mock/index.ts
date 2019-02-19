@@ -1,6 +1,7 @@
 import { Logger } from 'log4js';
 import * as path from 'path';
 import { BotProxy } from '../../../interface/bot-proxy.interface';
+import { MessageContext } from '../../../interface/message-context.interface';
 
 let mBot: BotProxy;
 let logger: Logger;
@@ -22,8 +23,8 @@ export const onStop = () => {
     logger.debug('onStop()');
 };
 
-export const onMessage = (message: string, channelId: string, userId: string, data: { [key: string]: any }) => {
-    mBot.sendTalk(channelId, `モック:${message.split(' ').slice(1).join()}`);
+export const onMessage = async (message: string, context: MessageContext, data: { [key: string]: any }) => {
+    await mBot.sendTalk(context.channelId, `モック:${message.split(' ').slice(1).join()}`);
 };
 
 export const onPluginEvent = (eventName: string, value?: any, fromId?: string) => {

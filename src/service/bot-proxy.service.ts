@@ -5,8 +5,20 @@ export class BotProxyService implements BotProxy {
     constructor(private bot: BotService) {
     }
 
+    getBotUserId(): Promise<string> {
+        return this.bot.getBotUserId();
+    }
+
+    getChannelList(): Promise<any[]> {
+        return this.bot.getChannelList();
+    }
+
     getChannelId(channelName: string): Promise<string> {
         return this.bot.getChannelId(channelName);
+    }
+
+    getUserList(): Promise<any[]> {
+        return this.bot.getUserList();
     }
 
     sendTalk(channelId: string, text: string, attachmentProperty?: { [key: string]: any }[]): Promise<any> {

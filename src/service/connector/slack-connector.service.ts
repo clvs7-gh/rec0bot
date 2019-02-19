@@ -16,7 +16,15 @@ export class SlackConnectorService extends EventEmitter implements Connector {
     }
 
     private subscribeEvents() {
-        this.SUBSCRIBE_EVENTS.forEach((ev) => this.client.on(ev, (value) => this.emit(ev, value)));
+        this.SUBSCRIBE_EVENTS.forEach((ev) => this.client.on(ev, (value) => {
+            if (ev === 'message') {
+                // Add some properties
+                value.mentions = value.text.match(/<([@!]\w+)(?:\|.*)?>/gi);
+                value.isMentioned = ['!everyone', '!here', '!channel', `@${this.client.activeUserId}`]
+                    .some((v) => value.mentions.includes(v));
+            }
+            this.emit(ev, value);
+        }));
     }
 
     getConnectorName(): string {
@@ -51,14 +59,34 @@ export class SlackConnectorService extends EventEmitter implements Connector {
         }
     }
 
+    async getBotUserId(): Promise<string> {
+        await this.waitForOnline();
+        if (!this.client.activeUserId) {
+            throw new Error('No active user!');
+        }
+        return this.client.activeUserId;
+    }
+
+    async getChannelList(): Promise<any[]> {
+        await this.waitForOnline();
+        // @ts-ignore
+        return (await this.webClient.channels.list()).channels || [];
+    }
+
     async getChannelId(channelName: string): Promise<string> {
         await this.waitForOnline();
         // @ts-ignore
-        const channel = (await this.webClient.channels.list()).channels.find((c) => c.name === channelName.trim());
+        const channel = (await this.getChannelsList()).find((c) => c.name === channelName.trim());
         if (!channel) {
             throw new Error('No such channel.');
         }
         return channel.id;
+    }
+
+    async getUserList(): Promise<any[]> {
+        await this.waitForOnline();
+        // @ts-ignore
+        return (await this.webClient.users.list()).users || [];
     }
 
     async editText(channelId: string, textId: string, text: string): Promise<any> {

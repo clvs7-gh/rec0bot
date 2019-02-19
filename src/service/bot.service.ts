@@ -2,6 +2,7 @@ import { CronJob } from 'cron';
 import * as _ from 'lodash';
 import { Logger } from 'log4js';
 import { Connector } from '../interface/connector.interface';
+import { MessageContext } from '../interface/message-context.interface';
 import { RegisteredPluginInfo } from '../interface/registered-plugin-info.interface';
 import { BotProxyService } from './bot-proxy.service';
 import { LoggerService } from './logger.service';
@@ -17,15 +18,15 @@ export class BotService {
         this.logger.info('BotService has been initialized.');
     }
 
-    private async onMessage(message: string, channelId: string, userId: string, data: any) {
-        this.logger.debug(`onMessage() : message: ${message}, channelId: ${channelId}, userId: ${userId}`);
+    private async onMessage(message: string, context: MessageContext, data: any) {
+        this.logger.debug(`onMessage() : message: ${message}, channelId: ${context.channelId}, userId: ${context.userId}`);
         message = message || '';
         Object.values(this.plugins).forEach(entry => {
             if (entry.metadata.filter_prefixes && entry.metadata.filter_prefixes.indexOf(message.split(' ')[0]) < 0) {
                 // Not satisfied with filter condition
                 return;
             }
-            entry.instance.onMessage(message, channelId, userId, _.cloneDeep(data));
+            entry.instance.onMessage(message, context, _.cloneDeep(data));
         });
     }
 
@@ -83,7 +84,12 @@ export class BotService {
         this.logger.info(`Now ${this.botName} is watching you; it's ready!`);
         process.on('SIGINT', () => this.finish());
         process.on('exit', () => this.finish());
-        this.connectorService.on('message', (v) => this.onMessage(v.text, v.channel, v.user, v));
+        this.connectorService.on('message', (v) => this.onMessage(v.text, {
+            channelId: v.channel,
+            userId: v.user,
+            mentions: v.mentions,
+            isMentioned: v.isMentioned
+        }, v));
     }
 
     async finish() {
@@ -103,8 +109,20 @@ export class BotService {
         return Object.values(this.plugins);
     }
 
+    async getBotUserId(): Promise<string> {
+        return await this.connectorService.getBotUserId();
+    }
+
+    async getChannelList(): Promise<any[]> {
+        return await this.connectorService.getChannelList();
+    }
+
     async getChannelId(channelName: string): Promise<string> {
         return await this.connectorService.getChannelId(channelName);
+    }
+
+    async getUserList(): Promise<any[]> {
+        return await this.connectorService.getUserList();
     }
 
     async editTalk(channelId: string, textId: string, text: string): Promise<any> {
