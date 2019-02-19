@@ -20,7 +20,10 @@ export class BotService {
 
     private async onMessage(message: string, context: MessageContext, data: any) {
         this.logger.debug(`onMessage() : message: ${message}, channelId: ${context.channelId}, userId: ${context.userId}`);
-        message = message || '';
+        message = (message || '').trim();
+        if (context.isMentioned) {
+            message = message.replace(/^(<[@!].+?>)/gim, '').trim();
+        }
         Object.values(this.plugins).forEach(entry => {
             if (entry.metadata.filter_prefixes && entry.metadata.filter_prefixes.indexOf(message.split(' ')[0]) < 0) {
                 // Not satisfied with filter condition

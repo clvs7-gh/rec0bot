@@ -7,7 +7,7 @@ export class MockConnectorService extends EventEmitter implements Connector {
     private count = 0;
     private dummyTexts = [
         'Dummy text. Timestamp : ' + (new Date()).getTime(),
-        'sindoi しんどいテスト',
+        '<@UDUMMYBOT000> sindoi しんどいテスト',
         'clean info',
     ];
     private timeout: NodeJS.Timeout | undefined;
@@ -35,8 +35,8 @@ export class MockConnectorService extends EventEmitter implements Connector {
                 text: this.dummyTexts[i],
                 channel: 'CDUMMYCNL000',
                 user: 'UDUMMYUSR000',
-                mentions: i === 0 ? ['!here'] : [],
-                isMentioned: i === 0
+                mentions: i === 1 ? ['@UDUMMYBOT000'] : [],
+                isMentioned: i === 1
             };
             this.emit('message', dummyData);
             this.timeout = setTimeout(() => loopFn(), 5000);
