@@ -19,7 +19,7 @@ export class SlackConnectorService extends EventEmitter implements Connector {
         this.SUBSCRIBE_EVENTS.forEach((ev) => this.client.on(ev, (value) => {
             if (ev === 'message') {
                 // Add some properties
-                value.mentions = value.text.match(/<([@!]\w+)(?:\|.*)?>/gi) || [];
+                value.mentions = (/<([@!]\w+)(?:\|.*)?>/gi.exec(value.text) || []).slice(1);
                 value.isMentioned = ['!everyone', '!here', '!channel', `@${this.client.activeUserId}`]
                     .some((v) => value.mentions.includes(v));
             }
