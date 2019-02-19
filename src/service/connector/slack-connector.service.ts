@@ -76,7 +76,7 @@ export class SlackConnectorService extends EventEmitter implements Connector {
     async getChannelId(channelName: string): Promise<string> {
         await this.waitForOnline();
         // @ts-ignore
-        const channel = (await this.getChannelsList()).find((c) => c.name === channelName.trim());
+        const channel = (await this.getChannelList()).find((c) => c.name === channelName.trim());
         if (!channel) {
             throw new Error('No such channel.');
         }
