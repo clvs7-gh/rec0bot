@@ -22,7 +22,7 @@ export class BotService {
         this.logger.debug(`onMessage() : message: ${message}, channelId: ${context.channelId}, userId: ${context.userId}`);
         message = (message || '').trim();
         if (context.isMentioned) {
-            message = message.replace(/^(<[@!].+?>)/gim, '').trim();
+            message = message.replace(/^(<[@!].+?>)/i, '').trim();
         }
         Object.values(this.plugins).forEach(entry => {
             if (entry.metadata.filter_prefixes && entry.metadata.filter_prefixes.indexOf(message.split(' ')[0]) < 0) {

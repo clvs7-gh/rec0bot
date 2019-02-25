@@ -7,16 +7,18 @@ export class MockConnectorService extends EventEmitter implements Connector {
     private count = 0;
     private dummyTexts = [
         'Dummy text. Timestamp : ' + (new Date()).getTime(),
-        '<@UDUMMYBOT000> sindoi しんどいテスト',
+        '<@UDUMMYBOT000> sindoi しんどいテスト \n<@UDUMMYBOT000|bot>\n<@UDUMMYBOT000|bot>\n sample.',
         'clean info',
     ];
     private timeout: NodeJS.Timeout | undefined;
 
-    emitMessage(message: string) {
+    emitMessage(message: string, isMentioned = false) {
         this.emit('message', {
             text: message,
             channel: 'CDUMMYCNL000',
             user: 'UDUMMYUSR000',
+            mentions: isMentioned ? ['@UDUMMYBOT000'] : [],
+            isMentioned: isMentioned
         });
     }
 

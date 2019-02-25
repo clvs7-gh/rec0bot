@@ -46,16 +46,17 @@ describe('Testing BotService', async () => {
         expect(isCalled).toEqual(false);
         plugin.onMessage = oldFn;
     });
-    it('Test onMessage (2nd)', async () => {
-        const messageOk = 'mock 2nd test';
+    it('Test onMessage (multi-line mentions)', async () => {
+        const messageRaw = '<@UDUMMYBOT000> mock mention test \n<@UDUMMYBOT000|bot>\n<@UDUMMYBOT000|bot>\n sample.\n';
+        const messageExpected = 'mock mention test \n<@UDUMMYBOT000|bot>\n<@UDUMMYBOT000|bot>\n sample.';
         let isCalled = false;
         const plugin = await bot.getActivePlugins()[0].instance;
         const oldFn = plugin.onMessage;
         plugin.onMessage = (message: string, context: MessageContext, data: { [key: string]: any }) => {
-            expect(message).toEqual(messageOk);
+            expect(message).toEqual(messageExpected);
             isCalled = true;
         };
-        mockConnector.emitMessage(messageOk);
+        mockConnector.emitMessage(messageRaw, true);
         await new Promise((r) => setTimeout(r, 100));
         expect(isCalled).toEqual(true);
         plugin.onMessage = oldFn;
