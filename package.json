@@ -1,6 +1,6 @@
 {
   "name": "rec0-bot",
-  "version": "1.1.0",
+  "version": "1.2.4",
   "description": "A bot for revolution of comm :)",
   "main": "index.js",
   "scripts": {
@@ -14,21 +14,22 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@slack/client": "^4.8.0",
-    "cron": "^1.6.0",
+    "@slack/rtm-api": "^5.0.1",
+    "@slack/web-api": "^5.0.1",
+    "cron": "^1.7.1",
     "lodash": "^4.17.11",
-    "log4js": "^4.0.2"
+    "log4js": "^4.1.1"
   },
   "devDependencies": {
-    "@types/cron": "^1.6.0",
-    "@types/jest": "^24.0.3",
-    "@types/lodash": "^4.14.120",
-    "@types/node": "^11.9.3",
+    "@types/cron": "^1.7.0",
+    "@types/jest": "^24.0.12",
+    "@types/lodash": "^4.14.123",
+    "@types/node": "^12.0.0",
     "jest": "^24.1.0",
-    "ts-jest": "^23.10.5",
-    "ts-lint": "^4.5.1",
-    "ts-node": "^8.0.2",
-    "typescript": "^3.3.3"
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.16.0",
+    "ts-node": "^8.1.0",
+    "typescript": "^3.4.5"
   },
   "jest": {
     "moduleFileExtensions": [
