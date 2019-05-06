@@ -2,7 +2,7 @@ import { MessageContext } from '../interface/message-context.interface';
 import { BotService } from '../service/bot.service';
 import { MockConnectorService } from '../service/connector/mock-connector.service';
 
-describe('Testing BotService', async () => {
+describe('Testing BotService', () => {
     const mockConnector = new MockConnectorService();
     const bot = new BotService(mockConnector);
     it('Init', async () => {
