@@ -8,7 +8,10 @@ describe('Testing BotService', () => {
     const bot = new BotService(mockConnector);
     it('Test version', async () => {
         const packageJson = await import(__dirname + '/../../package.json');
-        expect(packageJson.version === environment.version).toEqual(true);
+        expect(packageJson.version).toEqual(environment.version);
+        const tags = (process.env.LATEST_VERSION_TAG || '').trim().match(/^v(.+)$/) || [];
+        const tagVersion = tags.length > 1 ? tags[1] : tags[0];
+        expect(packageJson.version).toEqual(tagVersion);
     });
     it('Init', async () => {
         await bot.run();
