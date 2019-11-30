@@ -1,0 +1,23 @@
+name: Basic test
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  basic-test:
+    name: Basic Test (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ '12', '11', '10' ]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install Dependencies
+        run: npm i
+      - name: Run test
+        run: npm test
