@@ -71,7 +71,7 @@ export class SlackConnectorService extends EventEmitter implements Connector {
     async getChannelList(): Promise<any[]> {
         await this.waitForOnline();
         // @ts-ignore
-        return (await this.webClient.channels.list()).channels || [];
+        return (await this.webClient.conversations.list()).channels || [];
     }
 
     async getChannelId(channelName: string): Promise<string> {

@@ -10,11 +10,11 @@ RUN set -x && \
     cd rec0bot/plugins/sindoi && \
     # Build sindoi plugin
     npm i && npm run build && \
-    rm -rf node_modules && npm i --production && \
+    npm prune --production && \
     cd ../../ && \
     # Build core
     npm i && npm run build && \
-    rm -rf node_modules && npm i --production
+    npm prune --production
 
 WORKDIR /app/rec0bot
 

@@ -10,6 +10,8 @@ A bot for Slack workspace. Works on Node.js.
 
 Node.js >= v10. Not tested on other versions.
 
+**Note : Currently Rec0-bot doesn't support Slack's new Events API. It requires HTTP access from internet (why do I need http server for just a bot?), so I'm not willing to support it for now.**
+
 ## How to use
 
 Run `npm start` to start bot. 
