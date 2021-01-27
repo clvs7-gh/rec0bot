@@ -39,7 +39,7 @@ export class BotService {
 
     private wrapWithTimeout(promise: Promise<any>, timeoutMs = 5000, rejectOnTimedOut = false): Promise<any> {
         let timeout: NodeJS.Timeout | undefined;
-        const timedOutPromise = new Promise((resolve, reject) => {
+        const timedOutPromise = new Promise<void>((resolve, reject) => {
             timeout = setTimeout(() => {
                 this.logger.warn('Timed out!');
                 rejectOnTimedOut ? reject() : resolve();
@@ -57,7 +57,7 @@ export class BotService {
         // Loading plugins
         const pluginPromises = [];
         for ( const [instance, metadata] of (await PluginLoaderService.load()) ) {
-            pluginPromises.push(await this.wrapWithTimeout(new Promise(async (resolve) => {
+            pluginPromises.push(await this.wrapWithTimeout(new Promise<void>(async (resolve) => {
                 try {
                     // Initialize plugin
                     await instance.init(new BotProxyService(this), {logger: LoggerService.getLogger(metadata.name)});

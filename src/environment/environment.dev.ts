@@ -2,7 +2,7 @@ import * as path from 'path';
 import { Environment } from '../interface/environment.interface';
 
 export const environmentDev: Environment = {
-    version: '1.3.0',
+    version: '1.3.1',
     isProduction: false,
     slack: {
         token: (process.env.REC0_ENV_SLACK_TOKEN || '').trim(),
