@@ -18,40 +18,6 @@ export class BotService {
         this.logger.info('BotService has been initialized.');
     }
 
-    private async onMessage(message: string, context: MessageContext, data: any) {
-        this.logger.debug(`onMessage() : message: ${message}, channelId: ${context.channelId}, userId: ${context.userId}`);
-        message = (message || '').trim();
-        if (context.isMentioned) {
-            message = message.replace(/^(<[@!].+?>)/i, '').trim();
-        }
-        Object.values(this.plugins).forEach(entry => {
-            if (entry.metadata.filter_prefixes && entry.metadata.filter_prefixes.indexOf(message.split(' ')[0]) < 0) {
-                // Not satisfied with filter condition
-                return;
-            }
-            entry.instance.onMessage(message, context, _.cloneDeep(data));
-        });
-    }
-
-    private _firePluginEvent(targetId: string, eventName: string, value?: any, fromId?: string) {
-        this.plugins[targetId].instance.onPluginEvent(eventName, _.cloneDeep(value), fromId);
-    }
-
-    private wrapWithTimeout(promise: Promise<any>, timeoutMs = 5000, rejectOnTimedOut = false): Promise<any> {
-        let timeout: NodeJS.Timeout | undefined;
-        const timedOutPromise = new Promise<void>((resolve, reject) => {
-            timeout = setTimeout(() => {
-                this.logger.warn('Timed out!');
-                rejectOnTimedOut ? reject() : resolve();
-                timeout = void 0;
-            }, timeoutMs);
-        });
-        return Promise.race([
-            promise.finally(() => timeout && clearTimeout(timeout)),
-            timedOutPromise
-        ]);
-    }
-
     async run(): Promise<void> {
         this.logger.info('Loading plugins...');
         // Loading plugins
@@ -147,11 +113,46 @@ export class BotService {
     async firePluginEvent(targetId: string, eventName: string, value?: any, fromId?: string): Promise<void> {
         this.logger.debug(`firePluginEvent() called : targetId: ${targetId}, eventName: ${eventName}, fromId: ${fromId}`);
         if (!this.plugins[targetId]) {
-            throw new Error('No such target,');
+            throw new Error('No such target.');
         }
         if (eventName.toLowerCase().startsWith('scheduled:')) {
             throw new Error('You cannot specify such a event name.');
         }
         this._firePluginEvent(targetId, eventName, value, fromId);
+    }
+
+    private async onMessage(message: string, context: MessageContext, data: any) {
+        this.logger.debug(`onMessage() : message: ${message}, channelId: ${context.channelId}, userId: ${context.userId}`);
+        message = (message || '').trim();
+        if (context.isMentioned) {
+            message = message.replace(/^(<[@!].+?>)/i, '').trim();
+        }
+        Object.values(this.plugins).forEach(entry => {
+            if (entry.metadata.filter_prefixes && entry.metadata.filter_prefixes.indexOf(message.split(' ')[0]) < 0) {
+                // Not satisfied with filter condition
+                return;
+            }
+            entry.instance.onMessage(message, context, _.cloneDeep(data));
+        });
+    }
+
+    private _firePluginEvent(targetId: string, eventName: string, value?: any, fromId?: string) {
+        this.plugins[targetId].instance.onPluginEvent(eventName, _.cloneDeep(value), fromId);
+    }
+
+    private wrapWithTimeout(promise: Promise<any>, timeoutMs = 5000, rejectOnTimedOut = false): Promise<any> {
+        let timeout: NodeJS.Timeout | undefined;
+        const timedOutPromise = new Promise<void>((resolve, reject) => {
+            timeout = setTimeout(() => {
+                this.logger.warn('Timed out!');
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                rejectOnTimedOut ? reject() : resolve();
+                timeout = void 0;
+            }, timeoutMs);
+        });
+        return Promise.race([
+            promise.finally(() => timeout && clearTimeout(timeout)),
+            timedOutPromise
+        ]);
     }
 }

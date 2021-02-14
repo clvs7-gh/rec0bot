@@ -2,7 +2,7 @@ name: Basic test
 on:
   push:
     branches:
-      - master
+      - '**'
 
 jobs:
   basic-test:
@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [ '14', '13', '12', '11', '10' ]
+        node: [ '15', '14', '13', '12' ]
+      fail-fast: false
     steps:
       - uses: actions/checkout@v1
       - name: Setup node
@@ -19,5 +20,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install Dependencies
         run: npm i
+      - name: Run lint
+        run: npm run lint
       - name: Run test
         run: npm test

@@ -5,7 +5,10 @@ export const environmentProd: Environment = {
     version: '1.3.1',
     isProduction: true,
     slack: {
-        token: (process.env.REC0_ENV_SLACK_TOKEN || '').trim(),
+        token: {
+            web: (process.env.REC0_ENV_SLACK_WEBAPI_TOKEN || '').trim(),
+            sock: (process.env.REC0_ENV_SLACK_SOCK_TOKEN || '').trim(),
+        },
         useMock: (process.env.REC0_ENV_SLACK_USE_MOCK || 'false').trim().toLowerCase() === 'true'
     },
     plugin: {

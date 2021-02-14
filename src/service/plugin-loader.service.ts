@@ -31,19 +31,19 @@ export class PluginLoaderService {
         return <Array<[BotPlugin, PluginMetadata]>> (await Promise.all(
             validPlugins.map(([dirName, rawJson]) => [dirName, JSON.parse(rawJson)])
                 .filter(([dirName, metadata]) => (environment.plugin.disabledPluginNames.findIndex((name) => name === metadata.name) < 0))
-                    .map(async ([dirName, metadata]) => {
-                        try {
-                            return [await import(path.join(environment.plugin.rootDir, dirName, 'index.js'))
-                                .catch((e) => {
-                                    logger.warn(`Failed to 1st attempt on loading ${metadata.name} : `, e);
-                                    return environment.isProduction ?
-                                        Promise.reject(e) : import(path.join(environment.plugin.rootDir, dirName, 'index.ts'));
-                                }), metadata];
-                        } catch (e) {
-                            logger.warn(`Failed to load ${metadata.name} : `, e);
-                            return void 0;
-                        }
-                    }),
-                )).filter((v) => v !== void 0);
+                .map(async ([dirName, metadata]) => {
+                    try {
+                        return [await import(path.join(environment.plugin.rootDir, dirName, 'index.js'))
+                            .catch((e) => {
+                                logger.warn(`Failed to load js of ${metadata.name} : `, e);
+                                return environment.isProduction ?
+                                    Promise.reject(e) : import(path.join(environment.plugin.rootDir, dirName, 'index.ts'));
+                            }), metadata];
+                    } catch (e) {
+                        logger.warn(`Failed to load plugin ${metadata.name} : `, e);
+                        return void 0;
+                    }
+                }),
+        )).filter((v) => v !== void 0);
     }
 }
