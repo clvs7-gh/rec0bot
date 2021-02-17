@@ -2,11 +2,11 @@ export interface Environment {
     version: string;
     isProduction: boolean;
     slack: {
-        token: string,
-        useMock: boolean,
+        token: { [key: string]: string };
+        useMock: boolean;
     };
     plugin: {
-        rootDir: string,
-        disabledPluginNames: string[]
+        rootDir: string;
+        disabledPluginNames: string[];
     };
 }

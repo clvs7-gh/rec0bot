@@ -1,31 +1,21 @@
-import { RTMClient } from '@slack/rtm-api';
-import { WebClient } from '@slack/web-api';
 import { EventEmitter } from 'events';
+import { SocketModeClient } from '@slack/socket-mode';
+import { WebClient } from '@slack/web-api';
 import { Connector } from '../../interface/connector.interface';
 
 export class SlackConnectorService extends EventEmitter implements Connector {
-    private client: RTMClient;
+    private sockClient: SocketModeClient;
     private webClient: WebClient;
     private _ready: Promise<any> | undefined;
 
+    private botUserId = '';
+
     private readonly SUBSCRIBE_EVENTS = ['message'];
 
-    constructor(token: string) {
+    constructor(sockToken: string, webToken: string) {
         super();
-        this.client = new RTMClient(token);
-        this.webClient = new WebClient(token);
-    }
-
-    private subscribeEvents() {
-        this.SUBSCRIBE_EVENTS.forEach((ev) => this.client.on(ev, (value) => {
-            if (ev === 'message') {
-                // Add some properties
-                value.mentions = (/<([@!]\w+)(?:\|.*)?>/gi.exec(value.text) || []).slice(1);
-                value.isMentioned = ['!everyone', '!here', '!channel', `@${this.client.activeUserId}`]
-                    .some((v) => value.mentions.includes(v));
-            }
-            this.emit(ev, value);
-        }));
+        this.sockClient = new SocketModeClient({ appToken: sockToken });
+        this.webClient = new WebClient(webToken);
     }
 
     getConnectorName(): string {
@@ -34,20 +24,22 @@ export class SlackConnectorService extends EventEmitter implements Connector {
 
     async init() {
         this._ready = new Promise(async (resolve, reject) => {
-            const result = await this.client.start();
+            const result = await this.sockClient.start();
             if (result.ok) {
                 this.subscribeEvents();
+                this.botUserId = await this.getBotUserId(false);
                 resolve(result);
             } else {
                 reject(result);
             }
         });
         await this._ready;
+        this.botUserId = await this.getBotUserId();
     }
 
     async finish() {
         if (this._ready) {
-            await this.client.disconnect();
+            await this.sockClient.disconnect();
         }
     }
 
@@ -60,12 +52,15 @@ export class SlackConnectorService extends EventEmitter implements Connector {
         }
     }
 
-    async getBotUserId(): Promise<string> {
-        await this.waitForOnline();
-        if (!this.client.activeUserId) {
+    async getBotUserId(isWaitForOnline = true): Promise<string> {
+        if (isWaitForOnline) {
+            await this.waitForOnline();
+        }
+        const res: any = await this.webClient.auth.test();
+        if (!res.ok) {
             throw new Error('No active user!');
         }
-        return this.client.activeUserId;
+        return res.user_id;
     }
 
     async getChannelList(): Promise<any[]> {
@@ -118,5 +113,19 @@ export class SlackConnectorService extends EventEmitter implements Connector {
             attachments: attachmentProperty,
             as_user: true
         });
+    }
+
+    private subscribeEvents() {
+        this.SUBSCRIBE_EVENTS.forEach((ev) => this.sockClient.on(ev, async ({event, body, ack}) => {
+            await ack();
+            const value = event;
+            if (ev === 'message') {
+                // Add some properties
+                value.mentions = (/<([@!]\w+)(?:\|.*)?>/gi.exec(value.text) || []).slice(1);
+                value.isMentioned = ['!everyone', '!here', '!channel', `@${this.botUserId}`]
+                    .some((v) => value.mentions.includes(v));
+            }
+            this.emit(ev, value);
+        }));
     }
 }

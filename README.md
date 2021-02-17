@@ -1,6 +1,7 @@
 # Rec0-bot --- A bot for revolution of comm.
 
-[![Build Status](https://travis-ci.org/clvs7-gh/rec0bot.svg?branch=master)](https://travis-ci.org/clvs7-gh/rec0bot)
+![Action](https://github.com/clvs7-gh/rec0bot/workflows/Basic%20test/badge.svg)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/clvs7-gh/rec0bot.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/clvs7-gh/rec0bot/context:javascript)
 
 ## What's this?
 
@@ -8,9 +9,7 @@ A bot for Slack workspace. Works on Node.js.
 
 ## Requirement
 
-Node.js >= v10. Not tested on other versions.
-
-**Note : Currently Rec0-bot doesn't support Slack's new Events API. It requires HTTP access from internet (why do I need http server for just a bot?), so I'm not willing to support it for now.**
+Node.js >= v12. Not tested on other versions.
 
 ## How to use
 
@@ -20,7 +19,8 @@ You can change configuration by setting environment variables below.
 
 ## Environment variables
 
-- `REC0_ENV_SLACK_TOKEN` : Token for Slack RTM API.  
+- `REC0_ENV_SLACK_WEBAPI_TOKEN` : Token for Slack Web API.  
+- `REC0_ENV_SLACK_SOCK_TOKEN` : Token for Slack SocketMode (App-level token).  
 - `REC0_ENV_SLACK_USE_MOCK` : Flag whether use mock connector or not.    
 - `REC0_ENV_PLUGIN_DIR_PATH` : Path for plugins directory.   
 - `REC0_ENV_PLUGIN_DISABLED_NAMES` : Plugin names that are excluded from running. You can specify multiple names with comma-separated.

@@ -1,5 +1,5 @@
-import { Logger } from 'log4js';
 import * as path from 'path';
+import { Logger } from 'log4js';
 import { BotProxy } from '../../../interface/bot-proxy.interface';
 import { MessageContext } from '../../../interface/message-context.interface';
 
