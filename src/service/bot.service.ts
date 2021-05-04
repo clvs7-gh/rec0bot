@@ -94,20 +94,20 @@ export class BotService {
         return await this.connectorService.getUserList();
     }
 
-    async editTalk(channelId: string, textId: string, text: string): Promise<any> {
-        this.logger.debug(`editTalk() called : channelId: ${channelId}, textId: ${textId}, text: ${text}`);
-        return await this.connectorService.editText(channelId, textId, text);
+    async editTalk(channelId: string, textId: string, text: string, options?: { [k: string]: any }): Promise<any> {
+        this.logger.debug(`editTalk() called : channelId: ${channelId}, textId: ${textId}, text: ${text}, options: ${JSON.stringify(options || {})}`);
+        return await this.connectorService.editText(channelId, textId, text, options);
     }
 
-    async sendFile(channelId: string, fileName: string, buffer: Buffer): Promise<any> {
-        this.logger.debug(`sendFile() called : channelId: ${channelId}, fileName: ${fileName}`);
-        return await this.connectorService.sendFile(channelId, fileName, buffer);
+    async sendFile(channelId: string, fileName: string, buffer: Buffer, options?: { [k: string]: any }): Promise<any> {
+        this.logger.debug(`sendFile() called : channelId: ${channelId}, fileName: ${fileName}, options: ${JSON.stringify(options || {})}`);
+        return await this.connectorService.sendFile(channelId, fileName, buffer, options);
     }
 
-    async sendTalk(channelId: string, text: string, attachmentProperty?: { [key: string]: any }[]): Promise<any> {
+    async sendTalk(channelId: string, text: string, options?: { [k: string]: any }): Promise<any> {
         // tslint:disable-next-line:max-line-length
-        this.logger.debug(`sendTalk() called : channelId: ${channelId},text: ${text}, attachmentProperty: ${JSON.stringify(attachmentProperty || {})}`);
-        return await this.connectorService.sendText(channelId, text, attachmentProperty);
+        this.logger.debug(`sendTalk() called : channelId: ${channelId},text: ${text}, options: ${JSON.stringify(options || {})}`);
+        return await this.connectorService.sendText(channelId, text, options);
     }
 
     async firePluginEvent(targetId: string, eventName: string, value?: any, fromId?: string): Promise<void> {

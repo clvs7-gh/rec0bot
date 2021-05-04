@@ -74,15 +74,15 @@ export class MockConnectorService extends EventEmitter implements Connector {
         return new Promise((r) => setTimeout(() => r([]), 1000));
     }
 
-    editText(channelId: string, textId: string, text: string): Promise<any> {
+    editText(channelId: string, textId: string, text: string, options: { [k: string]: any } = {}): Promise<any> {
         return new Promise((r) => setTimeout(r, 1000));
     }
 
-    sendFile(channelId: string, fileName: string, buffer: Buffer): Promise<any> {
+    sendFile(channelId: string, fileName: string, buffer: Buffer, options: { [k: string]: any } = {}): Promise<any> {
         return new Promise((r) => setTimeout(r, 1000));
     }
 
-    sendText(channelId: string, text: string, attachmentProperty?: { [key: string]: any }[]): Promise<any> {
+    sendText(channelId: string, text: string, options: { [k: string]: any } = {}): Promise<any> {
         return new Promise((r) => setTimeout(r, 1000));
     }
 }

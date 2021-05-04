@@ -21,15 +21,15 @@ export class BotProxyService implements BotProxy {
         return this.bot.getUserList();
     }
 
-    sendTalk(channelId: string, text: string, attachmentProperty?: { [key: string]: any }[]): Promise<any> {
-        return this.bot.sendTalk(channelId, text, attachmentProperty);
+    sendTalk(channelId: string, text: string, options?: { [k: string]: any }): Promise<any> {
+        return this.bot.sendTalk(channelId, text, options);
     }
 
-    editTalk(channelId: string, textId: string, text: string): Promise<any> {
+    editTalk(channelId: string, textId: string, text: string, options?: { [k: string]: any }): Promise<any> {
         return this.bot.editTalk(channelId, textId, text);
     }
 
-    sendFile(channelId: string, fileName: string, buffer: Buffer): Promise<any> {
+    sendFile(channelId: string, fileName: string, buffer: Buffer, options?: { [k: string]: any }): Promise<any> {
         return this.bot.sendFile(channelId, fileName, buffer);
     }
 
