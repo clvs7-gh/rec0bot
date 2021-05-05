@@ -85,33 +85,35 @@ export class SlackConnectorService extends EventEmitter implements Connector {
         return (await this.webClient.users.list()).users || [];
     }
 
-    async editText(channelId: string, textId: string, text: string): Promise<any> {
+    async editText(channelId: string, textId: string, text: string, options: { [k: string]: any } = {}): Promise<any> {
         await this.waitForOnline();
         return await this.webClient.chat.update({
             channel: channelId,
             ts: textId,
             text: text,
-            as_user: true
+            as_user: true,
+            ...options
         });
     }
 
-    async sendFile(channelId: string, fileName: string, buffer: Buffer): Promise<any> {
+    async sendFile(channelId: string, fileName: string, buffer: Buffer, options: { [k: string]: any } = {}): Promise<any> {
         await this.waitForOnline();
         return await this.webClient.files.upload({
             channels: channelId,
             filename: fileName,
             file: buffer,
-            as_user: true
+            as_user: true,
+            ...options
         });
     }
 
-    async sendText(channelId: string, text: string, attachmentProperty?: { [p: string]: any }[]): Promise<any> {
+    async sendText(channelId: string, text: string, options: { [k: string]: any } = {}): Promise<any> {
         await this.waitForOnline();
         return await this.webClient.chat.postMessage({
             channel: channelId,
             text: text,
-            attachments: attachmentProperty,
-            as_user: true
+            as_user: true,
+            ...options
         });
     }
 
