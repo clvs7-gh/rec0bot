@@ -18,7 +18,7 @@
     "@slack/socket-mode": "^1.0.1",
     "@slack/web-api": "^6.0.0",
     "cron": "^1.8.2",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "log4js": "^6.3.0"
   },
   "devDependencies": {
