@@ -6,9 +6,9 @@ import { MockConnectorService } from '../service/connector/mock-connector.servic
 describe('Testing BotService', () => {
     const mockConnector = new MockConnectorService();
     const bot = new BotService(mockConnector);
-	
-	afterAll(() => bot.finish());
-	
+
+    afterAll(() => bot.finish());
+
     it('Test version', async () => {
         const packageJson = await import(__dirname + '/../../package.json');
         expect(packageJson.version).toEqual(environment.version);
