@@ -91,7 +91,6 @@ export class SlackConnectorService extends EventEmitter implements Connector {
             channel: channelId,
             ts: textId,
             text: text,
-            as_user: true,
             ...options
         });
     }
@@ -102,7 +101,6 @@ export class SlackConnectorService extends EventEmitter implements Connector {
             channels: channelId,
             filename: fileName,
             file: buffer,
-            as_user: true,
             ...options
         });
     }
@@ -112,7 +110,6 @@ export class SlackConnectorService extends EventEmitter implements Connector {
         return await this.webClient.chat.postMessage({
             channel: channelId,
             text: text,
-            as_user: true,
             ...options
         });
     }
