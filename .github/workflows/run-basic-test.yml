@@ -1,8 +1,5 @@
 name: Basic test
-on:
-  push:
-    branches:
-      - '**'
+on: push
 
 jobs:
   basic-test:
