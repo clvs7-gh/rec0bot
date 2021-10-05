@@ -37,19 +37,20 @@
   },
   "jest": {
     "moduleFileExtensions": [
-      "ts",
-      "js"
+      "js",
+      "ts"
     ],
     "transform": {
       "^.+\\.(ts)$": "ts-jest"
     },
     "globals": {
       "ts-jest": {
-        "tsConfig": "tsconfig.json"
+        "tsconfig": "tsconfig.json"
       }
     },
     "testMatch": [
       "**/__tests__/**/*.test.(ts|js)"
-    ]
+    ],
+    "preset": "ts-jest"
   }
 }
