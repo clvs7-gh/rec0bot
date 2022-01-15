@@ -1,5 +1,9 @@
 name: Basic test
-on: push
+on:
+  push:
+    branches:
+      - '**'
+      - master
 
 jobs:
   basic-test:
@@ -7,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [ '16', '15', '14', '13', '12' ]
+        node: [ '17', '16', '15', '14', '13', '12' ]
       fail-fast: false
     steps:
       - uses: actions/checkout@v1
