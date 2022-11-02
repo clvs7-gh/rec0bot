@@ -14,9 +14,11 @@ jobs:
         node: [ '18', '17', '16', '15', '14' ]
       fail-fast: false
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
       - name: Install Dependencies
@@ -25,3 +27,18 @@ jobs:
         run: npm run lint
       - name: Run test
         run: npm test
+  basic-docker-build-test:
+    name: Basic Docker Build Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Test build
+        uses: docker/build-push-action@v3
+        with:
+          file: ./Dockerfile.example
+          push: false
+          tags: clvs7-gh/rec0bot-example:latest
+
