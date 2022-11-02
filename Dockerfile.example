@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM node:16-alpine
 MAINTAINER clvs7 <me@clvs7.com>
 
 RUN set -x && \
