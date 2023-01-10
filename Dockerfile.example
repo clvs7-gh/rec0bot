@@ -1,11 +1,11 @@
 FROM node:16-alpine
 MAINTAINER clvs7 <me@clvs7.com>
 
+COPY . /app
+
 RUN set -x && \
-    mkdir -p /app && \
     apk add --no-cache bash dumb-init git && \
     cd /app/ && \
-    git clone https://github.com/clvs7-gh/rec0bot && \
     git clone https://github.com/clvs7-gh/rec0bot-plugin-sindoi rec0bot/plugins/sindoi && \
     cd rec0bot/plugins/sindoi && \
     # Build sindoi plugin

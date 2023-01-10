@@ -41,4 +41,3 @@ jobs:
           file: ./Dockerfile.example
           push: false
           tags: clvs7-gh/rec0bot-example:latest
-
