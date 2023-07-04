@@ -8,7 +8,7 @@ A bot for Slack workspace. Works on Node.js.
 
 ## Requirement
 
-Node.js >= v14. Not tested on other versions.
+Node.js >= v16. Not tested on other versions.
 
 ## How to use
 
