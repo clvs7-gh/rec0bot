@@ -1,7 +1,6 @@
 # Rec0-bot --- A bot for revolution of comm.
 
 ![Action](https://github.com/clvs7-gh/rec0bot/workflows/Basic%20test/badge.svg)
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/clvs7-gh/rec0bot.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/clvs7-gh/rec0bot/context:javascript)
 
 ## What's this?
 
