@@ -6,7 +6,7 @@ import { Connector } from '../../interface/connector.interface';
 export class SlackConnectorService extends EventEmitter implements Connector {
     private sockClient: SocketModeClient;
     private webClient: WebClient;
-    private _ready: Promise<any> | undefined;
+    private _ready: Promise<void> | undefined;
 
     private botUserId = '';
 
@@ -24,13 +24,13 @@ export class SlackConnectorService extends EventEmitter implements Connector {
 
     async init() {
         this._ready = new Promise(async (resolve, reject) => {
-            const result = await this.sockClient.start();
-            if (result.ok) {
+            try {
+                await this.sockClient.start();
                 this.subscribeEvents();
                 this.botUserId = await this.getBotUserId(false);
-                resolve(result);
-            } else {
-                reject(result);
+                resolve();
+            } catch (e) {
+                reject(e);
             }
         });
         await this._ready;
@@ -116,7 +116,12 @@ export class SlackConnectorService extends EventEmitter implements Connector {
 
     private subscribeEvents() {
         this.SUBSCRIBE_EVENTS.forEach((ev) => this.sockClient.on(ev, async ({event, body, ack}) => {
-            await ack();
+            if (ack) {
+                await ack();
+            }
+            if (!event) {
+                return;
+            }
             const value = event;
             if (ev === 'message') {
                 // Add some properties
