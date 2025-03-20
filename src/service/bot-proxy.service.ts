@@ -1,8 +1,11 @@
-import { BotProxy } from '../interface/bot-proxy.interface';
-import { BotService } from './bot.service';
+import type { BotProxy } from '../interface/bot-proxy.interface.ts';
+import type { BotService } from './bot.service.ts';
 
 export class BotProxyService implements BotProxy {
-    constructor(private bot: BotService) {
+    private bot: BotService;
+
+    constructor(bot: BotService) {
+        this.bot = bot;
     }
 
     getBotUserId(): Promise<string> {

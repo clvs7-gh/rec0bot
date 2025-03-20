@@ -1,6 +1,6 @@
-import { CronJob } from 'cron';
-import { BotPlugin } from './bot-plugin.interface';
-import { PluginMetadata } from './plugin-metadata.interface';
+import type { CronJob } from 'cron';
+import type { BotPlugin } from './bot-plugin.interface.ts';
+import type { PluginMetadata } from './plugin-metadata.interface.ts';
 
 export interface RegisteredPluginInfo {
     metadata: PluginMetadata;

@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import type { EventEmitter } from 'events';
 
 export interface Connector extends EventEmitter {
     getConnectorName(): string;

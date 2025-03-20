@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { Connector } from '../../interface/connector.interface';
+import type { Connector } from '../../interface/connector.interface.ts';
 
 export class MockConnectorService extends EventEmitter implements Connector {
     private isInit = false;
@@ -12,7 +12,7 @@ export class MockConnectorService extends EventEmitter implements Connector {
         'check-alive',
         'info'
     ];
-    private timeout: NodeJS.Timeout | undefined;
+    private timeout: ReturnType<typeof setTimeout> | undefined;
 
     emitMessage(message: string, isMentioned = false) {
         this.emit('message', {
@@ -28,6 +28,7 @@ export class MockConnectorService extends EventEmitter implements Connector {
         return 'MockConnector';
     }
 
+    // eslint-disable-next-line @typescript-eslint/require-await
     async init() {
         if (this.isInit) {
             return;
@@ -48,6 +49,7 @@ export class MockConnectorService extends EventEmitter implements Connector {
         loopFn();
     }
 
+    // eslint-disable-next-line @typescript-eslint/require-await
     async finish() {
         if (this.timeout) {
             clearTimeout(this.timeout);
