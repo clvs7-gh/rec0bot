@@ -7,7 +7,7 @@ import { BotProxyService } from './bot-proxy.service.ts';
 import { LoggerService } from './logger.service.ts';
 import { PluginLoaderService } from './plugin-loader.service.ts';
 import { cloneDeep } from "es-toolkit";
-import { environment } from "../environment/environment.js";
+import { environment } from "../environment/environment.ts";
 
 export class BotService {
     private connectorService: Connector;
