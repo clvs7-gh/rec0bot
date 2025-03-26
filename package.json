@@ -9,7 +9,7 @@
     "start:js": "npm run build && npm run exec",
     "build": "tsc",
     "exec": "node ./output/index.js",
-    "exec-ts": "ts-node src/index.ts",
+    "exec-ts": "tsx src/index.ts",
     "test": "bash -c \"source src/__tests__/env.sh && vitest run\"",
     "lint": "eslint --ext .ts ."
   },
@@ -28,7 +28,7 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.10",
     "eslint": "^9.22.0",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.27.0",
     "vitest": "^3.0.9"
