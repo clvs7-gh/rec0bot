@@ -8,7 +8,7 @@ A bot for Slack workspace. Works on Node.js.
 
 ## Requirement
 
-Node.js >= v16. Not tested on other versions.
+Node.js >= v20. Not tested on other versions.
 
 ## How to use
 
@@ -23,6 +23,8 @@ You can change configuration by setting environment variables below.
 - `REC0_ENV_SLACK_USE_MOCK` : Flag whether use mock connector or not.    
 - `REC0_ENV_PLUGIN_DIR_PATH` : Path for plugins directory.   
 - `REC0_ENV_PLUGIN_DISABLED_NAMES` : Plugin names that are excluded from running. You can specify multiple names with comma-separated.
+- `REC0_ENV_PLUGIN_TIMEOUT_MS` : Threshold value (ms) for loading each plugin.
+- `REC0_ENV_PLUGIN_FAIL_ON_TIMEOUT` : Flag whether Rec0-bot fails when a plugin fails to load due to a timeout.
 
 ## Plugins
 

@@ -1,7 +1,10 @@
-import { environment } from '../environment/environment';
-import { MessageContext } from '../interface/message-context.interface';
-import { BotService } from '../service/bot.service';
-import { MockConnectorService } from '../service/connector/mock-connector.service';
+// noinspection TypeScriptUnresolvedReference
+
+import { environment } from '../environment/environment.ts';
+import type { MessageContext } from '../interface/message-context.interface.ts';
+import { BotService } from '../service/bot.service.ts';
+import { MockConnectorService } from '../service/connector/mock-connector.service.ts';
+import { expect, describe, afterAll, it, vi } from 'vitest';
 
 describe('Testing BotService', () => {
     const mockConnector = new MockConnectorService();
@@ -9,8 +12,8 @@ describe('Testing BotService', () => {
 
     afterAll(() => bot.finish());
 
-    it('Test version', async () => {
-        const packageJson = await import(__dirname + '/../../package.json');
+    it.runIf(process.env.LATEST_VERSION_TAG)('Test version', async () => {
+        const packageJson = await import(import.meta.dirname + '/../../package.json');
         expect(packageJson.version).toEqual(environment.version);
         const tags = (process.env.LATEST_VERSION_TAG || '').trim().match(/^v(.+)$/) || [];
         const tagVersion = tags.length > 1 ? tags[1] : tags[0];
@@ -19,8 +22,8 @@ describe('Testing BotService', () => {
     it('Init', async () => {
         await bot.run();
     });
-    it('Test plugin', async () => {
-        const plugins = await bot.getActivePlugins();
+    it('Test plugin', () => {
+        const plugins = bot.getActivePlugins();
         expect(plugins.length).toEqual(1);
         expect(plugins[0].metadata.name).toEqual('mock');
     });
@@ -33,43 +36,37 @@ describe('Testing BotService', () => {
     it('Test onMessage', async () => {
         const messageOk = 'mock test';
         let isCalled = false;
-        const plugin = await bot.getActivePlugins()[0].instance;
-        const oldFn = plugin.onMessage;
-        plugin.onMessage = (message: string, context: MessageContext, data: { [key: string]: any }) => {
+        const plugin = bot.getActivePlugins()[0].instance;
+        vi.spyOn(plugin, 'onMessage').mockImplementation((message: string, context: MessageContext, data: { [key: string]: any }) => {
             expect(message).toEqual(messageOk);
             isCalled = true;
-        };
+        });
         mockConnector.emitMessage(messageOk);
         await new Promise((r) => setTimeout(r, 100));
         expect(isCalled).toEqual(true);
-        plugin.onMessage = oldFn;
     });
     it('Test onMessage (filtered)', async () => {
         const messageNg = 'mock2 test';
         let isCalled = false;
-        const plugin = await bot.getActivePlugins()[0].instance;
-        const oldFn = plugin.onMessage;
-        plugin.onMessage = (message: string, context: MessageContext, data: { [key: string]: any }) => {
+        const plugin = bot.getActivePlugins()[0].instance;
+        vi.spyOn(plugin, 'onMessage').mockImplementation((message: string, context: MessageContext, data: { [key: string]: any }) => {
             isCalled = true;
-        };
+        });
         mockConnector.emitMessage(messageNg);
         await new Promise((r) => setTimeout(r, 100));
         expect(isCalled).toEqual(false);
-        plugin.onMessage = oldFn;
     });
     it('Test onMessage (multi-line mentions)', async () => {
         const messageRaw = '<@UDUMMYBOT000> mock mention test \n<@UDUMMYBOT000|bot>\n<@UDUMMYBOT000|bot>\n sample.\n';
         const messageExpected = 'mock mention test \n<@UDUMMYBOT000|bot>\n<@UDUMMYBOT000|bot>\n sample.';
         let isCalled = false;
-        const plugin = await bot.getActivePlugins()[0].instance;
-        const oldFn = plugin.onMessage;
-        plugin.onMessage = (message: string, context: MessageContext, data: { [key: string]: any }) => {
+        const plugin = bot.getActivePlugins()[0].instance;
+        vi.spyOn(plugin, 'onMessage').mockImplementation((message: string, context: MessageContext, data: { [key: string]: any }) => {
             expect(message).toEqual(messageExpected);
             isCalled = true;
-        };
+        })
         mockConnector.emitMessage(messageRaw, true);
         await new Promise((r) => setTimeout(r, 100));
         expect(isCalled).toEqual(true);
-        plugin.onMessage = oldFn;
     });
 });

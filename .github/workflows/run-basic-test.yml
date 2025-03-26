@@ -11,33 +11,56 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [ '20', '19', '18', '17', '16' ]
+        node: [ '23', '22', '21', '20' ]
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
       - name: Install Dependencies
         run: npm i
+      - name: Get latest Git tag (only on master)
+        if: github.ref == 'refs/heads/master'
+        run: echo "LATEST_VERSION_TAG=$(git describe --abbrev=0)" >> $GITHUB_ENV
       - name: Run lint
         run: npm run lint
       - name: Run test
         run: npm test
   basic-docker-build-test:
-    name: Basic Docker Build Test
+    name: Basic Image Build Test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Test build
-        uses: docker/build-push-action@v3
+        uses: docker/setup-buildx-action@v3
+      - name: Build example image
+        uses: docker/build-push-action@v6
         with:
           file: ./Dockerfile.example
           push: false
-          tags: clvs7-gh/rec0bot-example:latest
+          load: true
+          tags: ghcr.io/clvs7-gh/rec0bot-example:latest
+      - name: Run test in example image
+        run: docker run --rm ghcr.io/clvs7-gh/rec0bot-example:latest sh -c "npm ci && npm test"
+  ts-docker-build-test:
+      name: TypeScript Only Image Build Test
+      runs-on: ubuntu-latest
+      steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+          - name: Set up Docker Buildx
+            uses: docker/setup-buildx-action@v3
+          - name: Build example image
+            uses: docker/build-push-action@v6
+            with:
+                file: ./Dockerfile.ts.example
+                push: false
+                load: true
+                tags: ghcr.io/clvs7-gh/rec0bot-ts-example:latest
+          - name: Run test in example image
+            run: docker run --rm ghcr.io/clvs7-gh/rec0bot-ts-example:latest sh -c "npm ci && npm test"

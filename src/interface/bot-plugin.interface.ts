@@ -1,5 +1,5 @@
-import { BotProxy } from './bot-proxy.interface';
-import { MessageContext } from './message-context.interface';
+import type { BotProxy } from './bot-proxy.interface.ts';
+import type { MessageContext } from './message-context.interface.ts';
 
 export interface BotPlugin {
     init(botProxy: BotProxy, options?: { [key: string]: any }): void|Promise<void>;

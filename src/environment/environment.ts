@@ -1,5 +1,10 @@
-import { Environment } from '../interface/environment.interface';
-import { environmentDev } from './environment.dev';
-import { environmentProd } from './environment.prod';
+import type { Environment } from '../interface/environment.interface.ts';
+import { environmentDev } from './environment.dev.ts';
+import { environmentProd } from './environment.prod.ts';
+import path from "path";
 
-export const environment: Environment = (process.env.NODE_ENV === 'production') ? environmentProd : environmentDev;
+const { default: metadata } = await import(path.resolve(import.meta.dirname, '../../', 'package.json'), { with: { type: 'json' } });
+export const environment: Environment = {
+    ...((process.env.NODE_ENV === 'production') ? environmentProd : environmentDev),
+    version: metadata.version,
+};

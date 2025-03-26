@@ -1,6 +1,6 @@
-import * as log4js from 'log4js';
-import { Logger } from 'log4js';
-import { environment } from '../environment/environment';
+import log4js from 'log4js';
+import type { Logger } from 'log4js';
+import { environment } from '../environment/environment.ts';
 
 log4js.configure({
     appenders: {
@@ -13,7 +13,7 @@ log4js.configure({
         }
     },
     categories: {
-        default: {appenders: ['console'], level: environment.isProduction ? 'warn' : 'debug'}
+        default: { appenders: ['console'], level: environment.isProduction ? 'warn' : 'debug' }
     }
 });
 

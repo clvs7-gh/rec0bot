@@ -1,56 +1,36 @@
 {
   "name": "rec0-bot",
-  "version": "2.4.1",
+  "version": "3.0.0",
   "description": "A bot for revolution of comm :)",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "npm run exec-ts",
     "start:js": "npm run build && npm run exec",
     "build": "tsc",
     "exec": "node ./output/index.js",
-    "exec-ts": "ts-node src/index.ts",
-    "test": "bash -c \"source src/__tests__/env.sh && jest\"",
-    "lint": "eslint -c .eslintrc.js --ext .ts src"
+    "exec-ts": "tsx src/index.ts",
+    "test": "bash -c \"source src/__tests__/env.sh && vitest run\"",
+    "lint": "eslint --ext .ts ."
   },
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@slack/socket-mode": "^2.0.0",
-    "@slack/web-api": "^7.2.0",
-    "cron": "^3.1.7",
-    "lodash": "^4.17.21",
-    "log4js": "^6.9.1"
+    "@slack/socket-mode": "^2.0.3",
+    "@slack/web-api": "^7.9.0",
+    "cron": "^4.1.0",
+    "es-toolkit": "^1.33.0",
+    "log4js": "^6.9.1",
+    "vitest": "^3.0.9"
   },
   "devDependencies": {
-    "@types/cron": "^2.0.1",
-    "@types/jest": "^29.5.12",
-    "@types/lodash": "^4.17.5",
-    "@types/node": "^20.14.5",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
-    "eslint": "^8.56.0",
-    "eslint-plugin-import": "^2.29.1",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.5",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "ts"
-    ],
-    "transform": {
-      "^.+\\.(ts)$": "ts-jest"
-    },
-    "globals": {
-      "ts-jest": {
-        "tsconfig": "tsconfig.json"
-      }
-    },
-    "testMatch": [
-      "**/__tests__/**/*.test.(ts|js)"
-    ],
-    "preset": "ts-jest"
+    "@eslint/js": "^9.22.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.13.10",
+    "eslint": "^9.22.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.27.0",
+    "vitest": "^3.0.9"
   }
 }

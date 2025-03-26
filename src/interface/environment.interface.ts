@@ -8,5 +8,7 @@ export interface Environment {
     plugin: {
         rootDir: string;
         disabledPluginNames: string[];
+        timeoutMs: number;
+        failOnTimeout: boolean;
     };
 }

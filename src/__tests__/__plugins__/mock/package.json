@@ -4,5 +4,6 @@
   "description": "Mock",
   "filter_prefixes": [
     "mock"
-  ]
+  ],
+  "type": "module"
 }

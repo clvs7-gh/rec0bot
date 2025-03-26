@@ -1,64 +1,77 @@
 import { CronJob } from 'cron';
-import * as _ from 'lodash';
-import { Logger } from 'log4js';
-import { Connector } from '../interface/connector.interface';
-import { MessageContext } from '../interface/message-context.interface';
-import { RegisteredPluginInfo } from '../interface/registered-plugin-info.interface';
-import { BotProxyService } from './bot-proxy.service';
-import { LoggerService } from './logger.service';
-import { PluginLoaderService } from './plugin-loader.service';
+import type { Logger } from 'log4js';
+import type { Connector } from '../interface/connector.interface.ts';
+import type { MessageContext } from '../interface/message-context.interface.ts';
+import type { RegisteredPluginInfo } from '../interface/registered-plugin-info.interface.ts';
+import { BotProxyService } from './bot-proxy.service.ts';
+import { LoggerService } from './logger.service.ts';
+import { PluginLoaderService } from './plugin-loader.service.ts';
+import { cloneDeep } from "es-toolkit";
+import { environment } from "../environment/environment.ts";
 
 export class BotService {
+    private connectorService: Connector;
+    private botName: string;
+
     private logger: Logger;
     private plugins: { [pluginName: string]: RegisteredPluginInfo } = {};
     private isFinished = false;
 
-    constructor(private connectorService: Connector, private botName: string = 'REC0') {
+    constructor(connectorService: Connector, botName: string = 'REC0') {
+        this.connectorService = connectorService;
+        this.botName = botName;
         this.logger = LoggerService.getLogger(this.botName);
         this.logger.info('BotService has been initialized.');
     }
 
     async run(): Promise<void> {
-        this.logger.info('Loading plugins...');
-        // Loading plugins
-        const pluginPromises = [];
-        for ( const [instance, metadata] of (await PluginLoaderService.load()) ) {
-            pluginPromises.push(await this.wrapWithTimeout(new Promise<void>(async (resolve) => {
-                try {
-                    // Initialize plugin
-                    await instance.init(new BotProxyService(this), {logger: LoggerService.getLogger(metadata.name)});
-                    await instance.onStart();
-                    const scheduledEvents = metadata.scheduled_events || [];
-                    const jobs = scheduledEvents.map((entry) => {
-                        this.logger.info(`Registering scheduled job: time: ${entry.time}, event: ${entry.event}`);
-                        return new CronJob(entry.time, async () => await this._firePluginEvent(metadata.name, `scheduled:${entry.event}`),
-                            void 0, true, 'Asia/Tokyo');
-                    });
-                    this.plugins[metadata.name] = {metadata: metadata, instance: instance, scheduledJobs: jobs || []};
-                } catch (e) {
-                    this.logger.warn(`Failed to load plugin : ${metadata.name}, error : `, e);
-                }
-                // Always resolve even if has any errors (for Promise.all())
-                resolve();
-            })));
-        }
-        await Promise.all(pluginPromises);
-        this.logger.info('Done.');
+        this.logger.info(`Initializing connector (${this.connectorService.getConnectorName()})...`);
 
-        // Initialize connector
         await this.connectorService.init();
         this.logger.info('Waiting for online...');
         await this.connectorService.waitForOnline();
         this.logger.info('Connected.');
-        this.logger.info(`Now ${this.botName} is watching you; it's ready!`);
+
         process.on('SIGINT', () => this.finish());
         process.on('exit', () => this.finish());
+
+        this.logger.info('Loading plugins...');
+        // Loading plugins
+        const pluginPromises = [];
+        for (const [instance, metadata] of (await PluginLoaderService.load())) {
+            pluginPromises.push(this.wrapWithTimeout(
+                (async () => {
+                    try {
+                        // Initialize plugin
+                        await instance.init(new BotProxyService(this), { logger: LoggerService.getLogger(metadata.name) });
+                        await instance.onStart();
+                        const scheduledEvents = metadata.scheduled_events || [];
+                        const jobs = scheduledEvents.map((entry) => {
+                            this.logger.info(`Registering scheduled job: time: ${entry.time}, event: ${entry.event}`);
+                            return new CronJob(entry.time, async () => await this._firePluginEvent(metadata.name, `scheduled:${entry.event}`),
+                                void 0, true, 'Asia/Tokyo');
+                        });
+                        this.plugins[metadata.name] = {
+                            metadata: metadata,
+                            instance: instance,
+                            scheduledJobs: jobs || []
+                        };
+                    } catch (e) {
+                        this.logger.warn(`Failed to load plugin : ${metadata.name}, error : `, e);
+                    }
+                })()
+            ));
+        }
+        await Promise.all(pluginPromises);
+
         this.connectorService.on('message', (v) => this.onMessage(v.text, {
             channelId: v.channel,
             userId: v.user,
             mentions: v.mentions,
             isMentioned: v.isMentioned
         }, v));
+
+        this.logger.info(`Now ${this.botName} is watching you; it's ready!`);
     }
 
     async finish() {
@@ -67,7 +80,7 @@ export class BotService {
         }
         this.isFinished = true;
         this.logger.info('Finishing...');
-        for ( const entry of Object.values(this.plugins) ) {
+        for (const entry of Object.values(this.plugins)) {
             entry.scheduledJobs.forEach((job) => job.stop());
             await entry.instance.onStop();
         }
@@ -118,7 +131,7 @@ export class BotService {
         if (eventName.toLowerCase().startsWith('scheduled:')) {
             throw new Error('You cannot specify such a event name.');
         }
-        this._firePluginEvent(targetId, eventName, value, fromId);
+        await this._firePluginEvent(targetId, eventName, value, fromId);
     }
 
     private async onMessage(message: string, context: MessageContext, data: any) {
@@ -127,21 +140,21 @@ export class BotService {
         if (context.isMentioned) {
             message = message.replace(/^(<[@!].+?>)/i, '').trim();
         }
-        Object.values(this.plugins).forEach(entry => {
+        for (const entry of Object.values(this.plugins)) {
             if (entry.metadata.filter_prefixes && entry.metadata.filter_prefixes.indexOf(message.split(' ')[0]) < 0) {
                 // Not satisfied with filter condition
-                return;
+                continue;
             }
-            entry.instance.onMessage(message, context, _.cloneDeep(data));
-        });
+            await entry.instance.onMessage(message, context, cloneDeep(data));
+        }
     }
 
     private _firePluginEvent(targetId: string, eventName: string, value?: any, fromId?: string) {
-        this.plugins[targetId].instance.onPluginEvent(eventName, _.cloneDeep(value), fromId);
+        return this.plugins[targetId].instance.onPluginEvent(eventName, cloneDeep(value), fromId);
     }
 
-    private wrapWithTimeout(promise: Promise<any>, timeoutMs = 5000, rejectOnTimedOut = false): Promise<any> {
-        let timeout: NodeJS.Timeout | undefined;
+    private wrapWithTimeout(promise: Promise<any>, timeoutMs = environment.plugin.timeoutMs, rejectOnTimedOut = environment.plugin.failOnTimeout): Promise<any> {
+        let timeout: ReturnType<typeof setTimeout> | undefined;
         const timedOutPromise = new Promise<void>((resolve, reject) => {
             timeout = setTimeout(() => {
                 this.logger.warn('Timed out!');

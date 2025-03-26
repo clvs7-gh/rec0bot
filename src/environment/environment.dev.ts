@@ -1,8 +1,7 @@
 import * as path from 'path';
-import { Environment } from '../interface/environment.interface';
+import type { Environment } from '../interface/environment.interface.ts';
 
-export const environmentDev: Environment = {
-    version: '2.4.1',
+export const environmentDev: Omit<Environment, 'version'> = {
     isProduction: false,
     slack: {
         token: {
@@ -12,7 +11,9 @@ export const environmentDev: Environment = {
         useMock: (process.env.REC0_ENV_SLACK_USE_MOCK || 'true').trim().toLowerCase() === 'true'
     },
     plugin: {
-        rootDir: path.resolve(process.env.REC0_ENV_PLUGIN_DIR_PATH || path.resolve(__dirname, '../../plugins')),
-        disabledPluginNames: (process.env.REC0_ENV_PLUGIN_DISABLED_NAMES || '').split(',').map((n) => n.trim()) || []
+        rootDir: path.resolve(process.env.REC0_ENV_PLUGIN_DIR_PATH || path.resolve(import.meta.dirname, '../../plugins')),
+        disabledPluginNames: (process.env.REC0_ENV_PLUGIN_DISABLED_NAMES || '').split(',').map((n) => n.trim()) || [],
+        timeoutMs: Number((process.env.REC0_ENV_PLUGIN_TIMEOUT_MS || '1000').trim()),
+        failOnTimeout: (process.env.REC0_ENV_PLUGIN_FAIL_ON_TIMEOUT || 'true').trim().toLowerCase() === 'true'
     }
 };

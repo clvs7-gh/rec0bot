@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { SocketModeClient } from '@slack/socket-mode';
 import { WebClient } from '@slack/web-api';
-import { Connector } from '../../interface/connector.interface';
+import type { Connector } from '../../interface/connector.interface.ts';
 
 export class SlackConnectorService extends EventEmitter implements Connector {
     private sockClient: SocketModeClient;
@@ -23,16 +23,11 @@ export class SlackConnectorService extends EventEmitter implements Connector {
     }
 
     async init() {
-        this._ready = new Promise(async (resolve, reject) => {
-            try {
-                await this.sockClient.start();
-                this.subscribeEvents();
-                this.botUserId = await this.getBotUserId(false);
-                resolve();
-            } catch (e) {
-                reject(e);
-            }
-        });
+        this._ready = (async () => {
+            await this.sockClient.start();
+            this.subscribeEvents();
+            this.botUserId = await this.getBotUserId(false);
+        })();
         await this._ready;
         this.botUserId = await this.getBotUserId();
     }
@@ -48,7 +43,7 @@ export class SlackConnectorService extends EventEmitter implements Connector {
             await this._ready;
             return;
         } else {
-            return Promise.reject('Not initialized yet');
+            return Promise.reject(new Error('Not initialized yet'));
         }
     }
 
@@ -65,13 +60,11 @@ export class SlackConnectorService extends EventEmitter implements Connector {
 
     async getChannelList(): Promise<any[]> {
         await this.waitForOnline();
-        // @ts-ignore
         return (await this.webClient.conversations.list()).channels || [];
     }
 
     async getChannelId(channelName: string): Promise<string> {
         await this.waitForOnline();
-        // @ts-ignore
         const channel = (await this.getChannelList()).find((c) => c.name === channelName.trim());
         if (!channel) {
             throw new Error('No such channel.');
@@ -81,8 +74,7 @@ export class SlackConnectorService extends EventEmitter implements Connector {
 
     async getUserList(): Promise<any[]> {
         await this.waitForOnline();
-        // @ts-ignore
-        return (await this.webClient.users.list()).users || [];
+        return (await this.webClient.users.list({})).members || [];
     }
 
     async editText(channelId: string, textId: string, text: string, options: { [k: string]: any } = {}): Promise<any> {
@@ -115,7 +107,7 @@ export class SlackConnectorService extends EventEmitter implements Connector {
     }
 
     private subscribeEvents() {
-        this.SUBSCRIBE_EVENTS.forEach((ev) => this.sockClient.on(ev, async ({event, body, ack}) => {
+        this.SUBSCRIBE_EVENTS.forEach((ev) => this.sockClient.on(ev, async ({ event, body, ack }) => {
             if (ack) {
                 await ack();
             }
