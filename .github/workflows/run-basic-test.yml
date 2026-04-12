@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [ '23', '22', '21', '20' ]
+        node: [ '25', '24', '23', '22' ]
       fail-fast: false
     steps:
       - uses: actions/checkout@v4

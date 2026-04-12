@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:24-alpine
 LABEL org.opencontainers.image.authors="clvs7 <me@clvs7.com>"
 
 COPY . /app
