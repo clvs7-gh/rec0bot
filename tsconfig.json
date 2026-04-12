@@ -4,6 +4,7 @@
         "module": "nodenext",
         "allowImportingTsExtensions": true,
         "verbatimModuleSyntax": true,
+        "rootDir": "./src",
         "outDir": "./output/",
         "strict": true,
         "types": ["node"],
