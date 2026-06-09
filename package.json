@@ -16,21 +16,21 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@slack/socket-mode": "^2.0.6",
-    "@slack/web-api": "^7.15.0",
+    "@slack/socket-mode": "^2.0.7",
+    "@slack/web-api": "^7.16.0",
     "cron": "^4.4.0",
-    "es-toolkit": "^1.45.1",
+    "es-toolkit": "^1.47.0",
     "log4js": "^6.9.1",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.8"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.6.0",
-    "eslint": "^10.2.0",
-    "tsx": "^4.21.0",
-    "typescript": "^6.0.2",
-    "typescript-eslint": "^8.58.1",
-    "vitest": "^4.1.4"
+    "@types/node": "^25.9.2",
+    "eslint": "^10.4.1",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.0",
+    "vitest": "^4.1.8"
   }
 }
