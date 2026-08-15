@@ -89,8 +89,8 @@ export class SlackConnectorService extends EventEmitter implements Connector {
 
     async sendFile(channelId: string, fileName: string, buffer: Buffer, options: { [k: string]: any } = {}): Promise<any> {
         await this.waitForOnline();
-        return await this.webClient.files.upload({
-            channels: channelId,
+        return await this.webClient.files.uploadV2({
+            channel_id: channelId,
             filename: fileName,
             file: buffer,
             ...options
