@@ -1,6 +1,6 @@
 {
   "name": "rec0-bot",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "A bot for revolution of comm :)",
   "main": "index.js",
   "type": "module",
